@@ -21,14 +21,21 @@ crimes_set = {'509', '304B', '365', 'Immoral Traffic', '354', '511',
 act_key_df = pd.read_csv('./csv/keys/act_key.csv')
 print(act_key_df)
 
+# relevant_keys_df = act_key_df.loc[act_tok in crimes_set for act_tok in act_key_df['act_s']]
 
-relevant_keys_df = act_key_df.loc(any(act_tok in act_key_df['act_s'] for act_tok in crimes_set))
+act_key_df['tokens'] = act_key_df['act_s'].apply(lambda x: str(x).split())
+act_key_df['matches'] = act_key_df['tokens'].apply(lambda x: list(crimes_set.intersection(x)))
+act_key_df['is_against_women'] = act_key_df['matches'].apply(lambda x: True if x else False)
+print(act_key_df)
+
+acts_true_df = act_key_df.loc[act_key_df['is_against_women']==True]
+print(acts_true_df)
 '''
 relevant_keys_df - dataframe which is subset of act_key where only crimes relating to women
                 included
 '''
 print(relevant_keys_df)
-print('==============DONE==============')
+print('print(relevant_keys_df)==============DONE==============')
 
 #go through acts_sections to find cases
 acts_sections_df = pd.read_csv('./csv/acts_sections.csv')
